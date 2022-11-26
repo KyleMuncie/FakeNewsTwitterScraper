@@ -6,15 +6,17 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 import time
 import html2text as HtT
+from googletrans import Translator, constants
 
 data = pd.read_csv('test.csv')
 df = pd.DataFrame(data, columns=['Country (mentioned)', 'Claim', 'Source', 'Fact-checked Article'])
 cols_as_np = df[df.columns[0]].to_numpy()
 
-#selenium setup
+#selenium + translation setup
 chrome_options = Options()
 chrome_options.add_argument("--headless")
 driver = wd.Chrome(service=ChromeService(executable_path=ChromeDriverManager().install()), options=chrome_options)
+translator = Translator()
 
 # driver.get("https://www.asu.edu/")  if you want an example of the text outputted, uncomment this section
 # html = driver.page_source
@@ -245,6 +247,7 @@ for index, row in df.iterrows():
     driver.get(checkedURL)
     html = driver.page_source
     text = HtT.html2text(html) # this gives us all the text from the body of the website + a lil more that 
+    englishText = translator.translate(text) # translates to english automatically, can then search englishText
     #print(text)
     # else:
       #   print(row)
