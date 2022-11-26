@@ -1,8 +1,25 @@
 import pandas as pd
+from selenium import webdriver as wd
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service as ChromeService
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
+import time
+import html2text as HtT
 
-data = pd.read_csv(r'C:\Users\Kyle\PycharmProjects\pythonProject1\test.csv')
+data = pd.read_csv('test.csv')
 df = pd.DataFrame(data, columns=['Country (mentioned)', 'Claim', 'Source', 'Fact-checked Article'])
 cols_as_np = df[df.columns[0]].to_numpy()
+
+#selenium setup
+chrome_options = Options()
+chrome_options.add_argument("--headless")
+driver = wd.Chrome(service=ChromeService(executable_path=ChromeDriverManager().install()), options=chrome_options)
+
+# driver.get("https://www.asu.edu/")  if you want an example of the text outputted, uncomment this section
+# html = driver.page_source
+# text = HtT.html2text(html)
+# print(text)
 
 # Country keys
 countriesZero = ["Africa",
@@ -223,5 +240,11 @@ for index, row in df.iterrows():
         print("URL", 1)
     elif checkURL(urlTwo, row['Fact-checked Article']) == 1:
         print("URL", 2)
+    #selenium open/save text of article
+    checkedURL = row['Fact-checked Article']
+    driver.get(checkedURL)
+    html = driver.page_source
+    text = HtT.html2text(html) # this gives us all the text from the body of the website + a lil more that 
+    #print(text)
     # else:
       #   print(row)
