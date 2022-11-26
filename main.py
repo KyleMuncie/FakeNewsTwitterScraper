@@ -195,33 +195,33 @@ urlTwo = ["https://www.faitscovid19.ca",
 def checkURL(urlArray, url):
     temp = 0
     for full in urlArray:
-        if full.find(url) != -1:
+        if url.find(full) != -1:
             temp = 1
     return temp
 
 
 for index, row in df.iterrows():
     if row['Country (mentioned)'] in countriesZero:
-        print(0)
+        print("country", 0)
     elif row['Country (mentioned)'] in countriesOne:
-        print(1)
+        print("country", 1)
     elif row['Country (mentioned)'] in countriesTwo:
-        print(2)
+        print("country", 2)
     elif row['Country (mentioned)'] in countriesThree:
-        print(3)
+        print("country", 3)
     elif row['Source'] in sourceZero:
-        print(0)
+        print("Source", 0)
     elif row['Source'] in sourceOne:
-        print(1)
+        print("Source", 1)
     elif row['Source'] in sourceTwo:
-        print(2)
+        print("Source", 2)
     elif row['Source'] in sourceThree:
-        print(3)
+        print("Source", 3)
     elif checkURL(urlZero, row['Fact-checked Article']) == 1:
-        print(0)
+        print("URL", 0)
     elif checkURL(urlOne, row['Fact-checked Article']) == 1:
-        print(1)
+        print("URL", 1)
     elif checkURL(urlTwo, row['Fact-checked Article']) == 1:
-        print(2)
+        print("URL", 2)
     # else:
       #   print(row)
