@@ -232,37 +232,49 @@ for index, row in df.iterrows():
     Id += 1
     if row['Country (mentioned)'] in countriesZero:
         print("country", 0)
-        submission.append({'Id': Id, "Category": 0},ignore_index = True)
+        score = 0
+        submission = submission.append({'Id': Id, 'Category': score},ignore_index = True)
     elif row['Country (mentioned)'] in countriesOne:
         print("country", 1)
-        submission.append({'Id': Id, "Category": 1},ignore_index = True)
+        score = 1
+        submission = submission.append({'Id': Id, 'Category': score},ignore_index = True)
     elif row['Country (mentioned)'] in countriesTwo:
         print("country", 2)
-        submission.append({'Id': Id, "Category": 2},ignore_index = True)
+        score = 2
+        submission = submission.append({'Id': Id, 'Category': score},ignore_index = True)
     elif row['Country (mentioned)'] in countriesThree:
         print("country", 3)
-        submission.append({'Id': Id, "Category": 3},ignore_index = True)
+        score = 3
+        submission = submission.append({'Id': Id, 'Category': score},ignore_index = True)
     elif row['Source'] in sourceZero:
         print("Source", 0)
-        submission.append({'Id': Id, "Category": 0},ignore_index = True)
+        score = 0
+        submission = submission.append({'Id': Id, 'Category': score},ignore_index = True)
     elif row['Source'] in sourceOne:
         print("Source", 1)
-        submission.append({'Id': Id, "Category": 1},ignore_index = True)
+        score = 1
+        df2 = pd.DataFrame([[Id,score]], columns=['Id','Category'])
+        submission = submission.append({'Id': Id, 'Category': score},ignore_index = True)
     elif row['Source'] in sourceTwo:
         print("Source", 2)
-        submission.append({'Id': Id, "Category": 2},ignore_index = True)
+        score = 2
+        submission = submission.append({'Id': Id, 'Category': score},ignore_index = True)
     elif row['Source'] in sourceThree:
         print("Source", 3)
-        submission.append({'Id': Id, "Category": 3},ignore_index = True)
+        score = 3
+        submission = submission.append({'Id': Id, 'Category': score},ignore_index = True)
     elif checkURL(urlZero, row['Fact-checked Article']) == 1:
         print("URL", 0)
-        submission.append({'Id': Id, "Category": 0},ignore_index = True)
+        score = 0
+        submission = submission.append({'Id': Id, 'Category': score},ignore_index = True)
     elif checkURL(urlOne, row['Fact-checked Article']) == 1:
         print("URL", 1)
-        submission.append({'Id': Id, "Category": 1},ignore_index = True)
+        score = 1
+        submission = submission.append({'Id': Id, 'Category': score},ignore_index = True)
     elif checkURL(urlTwo, row['Fact-checked Article']) == 1:
         print("URL", 2)
-        submission.append({'Id': Id, "Category": 2},ignore_index = True)
+        score = 2
+        submission = submission.append({'Id': Id, 'Category': score},ignore_index = True)
     else:
     #selenium open/save text of article
         checkedURL = row['Fact-checked Article']
@@ -272,7 +284,7 @@ for index, row in df.iterrows():
             text = HtT.html2text(html) # this gives us all the text from the body of the website + a lil more that 
             englishText = translator.translate(text) # translates to english automatically, can then search englishText
             TranslatedText = englishText.text
-            score = -1
+            score = 0
 
             if("false" in TranslatedText):
                 score = 0
@@ -286,11 +298,11 @@ for index, row in df.iterrows():
             elif("unproven" in TranslatedText):
                 score = 3
                 numThree += 1
-            submission.append({'Id': Id, "Category": score},ignore_index = True)
+            submission = submission.append({'Id': Id, 'Category': score},ignore_index = True)
         except WebDriverException:
             print() # website is down
             score = 0
-            submission.append({'Id': Id, "Category": score},ignore_index = True)
+            submission = submission.append({'Id': Id, 'Category': score},ignore_index = True)
 
 print("Number of 0's from scraping")
 print(numZeros)
@@ -300,4 +312,9 @@ print("Number of 2's from scraping")
 print(numTwos)
 print("Number of 3's from scraping")
 print(numThree)
+
+print(submission)
+
+#submission.to_excel("submission.xslx")
 submission.to_csv('submission.csv')
+
