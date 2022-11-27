@@ -7,6 +7,7 @@ from selenium.webdriver.chrome.options import Options
 import time
 import html2text as HtT
 from googletrans import Translator, constants
+from selenium.common.exceptions import WebDriverException
 
 data = pd.read_csv('test.csv')
 df = pd.DataFrame(data, columns=['Country (mentioned)', 'Claim', 'Source', 'Fact-checked Article'])
@@ -218,36 +219,85 @@ def checkURL(urlArray, url):
             temp = 1
     return temp
 
+Id = 0
+numZeros = 0
+numOnes = 0
+numTwos = 0
+numThree = 0
+submission = pd.DataFrame()
 
 for index, row in df.iterrows():
+    print("claim number is ")
+    print(Id)
+    Id += 1
     if row['Country (mentioned)'] in countriesZero:
         print("country", 0)
+        submission.append({'Id': Id, "Category": 0})
     elif row['Country (mentioned)'] in countriesOne:
         print("country", 1)
+        submission.append({'Id': Id, "Category": 1})
     elif row['Country (mentioned)'] in countriesTwo:
         print("country", 2)
+        submission.append({'Id': Id, "Category": 2})
     elif row['Country (mentioned)'] in countriesThree:
         print("country", 3)
+        submission.append({'Id': Id, "Category": 3})
     elif row['Source'] in sourceZero:
         print("Source", 0)
+        submission.append({'Id': Id, "Category": 0})
     elif row['Source'] in sourceOne:
         print("Source", 1)
+        submission.append({'Id': Id, "Category": 1})
     elif row['Source'] in sourceTwo:
         print("Source", 2)
+        submission.append({'Id': Id, "Category": 2})
     elif row['Source'] in sourceThree:
         print("Source", 3)
+        submission.append({'Id': Id, "Category": 3})
     elif checkURL(urlZero, row['Fact-checked Article']) == 1:
         print("URL", 0)
+        submission.append({'Id': Id, "Category": 0})
     elif checkURL(urlOne, row['Fact-checked Article']) == 1:
         print("URL", 1)
+        submission.append({'Id': Id, "Category": 1})
     elif checkURL(urlTwo, row['Fact-checked Article']) == 1:
         print("URL", 2)
+        submission.append({'Id': Id, "Category": 2})
+    else:
     #selenium open/save text of article
-    checkedURL = row['Fact-checked Article']
-    driver.get(checkedURL)
-    html = driver.page_source
-    text = HtT.html2text(html) # this gives us all the text from the body of the website + a lil more that 
-    englishText = translator.translate(text) # translates to english automatically, can then search englishText
-    #print(text)
-    # else:
-      #   print(row)
+        checkedURL = row['Fact-checked Article']
+        try:
+            driver.get(checkedURL)
+            html = driver.page_source
+            text = HtT.html2text(html) # this gives us all the text from the body of the website + a lil more that 
+            englishText = translator.translate(text) # translates to english automatically, can then search englishText
+            TranslatedText = englishText.text
+            score = -1
+
+            if("false" in TranslatedText):
+                score = 0
+                numZeros += 1
+            elif("misleading" in TranslatedText):
+                score = 1
+                numOnes += 1
+            elif("true" in TranslatedText):
+                score = 2
+                numTwos += 1
+            elif("unproven" in TranslatedText):
+                score = 3
+                numThree += 1
+            submission.append({'Id': Id, "Category": score})
+        except WebDriverException:
+            print() # website is down
+            score = 0
+            submission.append({'Id': Id, "Category": score})
+
+print("Number of 0's from scraping")
+print(numZeros)
+print("Number of 1's from scraping")
+print(numOnes)
+print("Number of 2's from scraping")
+print(numTwos)
+print("Number of 3's from scraping")
+print(numThree)
+submission.to_csv('submission.csv')
