@@ -1,0 +1,5 @@
+pip install googletrans==3.1.0a0
+pip install pandas
+pip install -U selenium
+pip install html2text
+pip install webdriver-manager
